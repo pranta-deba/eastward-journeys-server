@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -21,15 +21,42 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+
     const categoriesCollection = client
       .db("eastwardJourneys")
       .collection("categories");
     const subCategoriesCollection = client
       .db("eastwardJourneys")
       .collection("subCategories");
-      
     const placesCollection = client.db("eastwardJourneys").collection("places");
     const userCollection = client.db("eastwardJourneys").collection("users");
+
+    /*------------------------------------------------------------------------------*/
+    app.post("/add_continent", async (req, res) => {
+      const newContinent = req.body;
+      const result = await categoriesCollection.insertOne(newContinent);
+      res.send(result);
+    });
+    app.get("/continents", async (req, res) => {
+      const allCategories = await categoriesCollection.find().toArray();
+      res.send(allCategories);
+    });
+    app.get("/continents/:id", async (req, res) => {
+      const { id } = req.params;
+      const allCountry = await subCategoriesCollection.find().toArray();
+      const filteringCountry = allCountry.filter(country => country.continentId === id);
+      res.send(filteringCountry);
+    });
+    app.post("/add_country", async (req, res) => {
+      const newCountry = req.body;
+      const result = await subCategoriesCollection.insertOne(newCountry);
+      res.send(result);
+    });
+    app.get("/country", async (req, res) => {
+      const allCountry = await subCategoriesCollection.find().toArray();
+      res.send(allCountry);
+    });
+    /*------------------------------------------------------------------------------*/
 
     await client.db("admin").command({ ping: 1 });
     console.log(
