@@ -73,6 +73,14 @@ async function run() {
       const result = await placesCollection.findOne(query);
       res.send(result);
     });
+    app.get("/filter_places/:country", async (req, res) => {
+      const { country } = req.params;
+      const allPlaces = await placesCollection.find().toArray();
+      const filteringPlaces = allPlaces.filter(
+        (place) => place.countryName === country
+      );
+      res.send(filteringPlaces);
+    });
     /*------------------------------------------------------------------------------*/
 
     await client.db("admin").command({ ping: 1 });
