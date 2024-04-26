@@ -44,7 +44,9 @@ async function run() {
     app.get("/continents/:id", async (req, res) => {
       const { id } = req.params;
       const allCountry = await subCategoriesCollection.find().toArray();
-      const filteringCountry = allCountry.filter(country => country.continentId === id);
+      const filteringCountry = allCountry.filter(
+        (country) => country.continentId === id
+      );
       res.send(filteringCountry);
     });
     app.post("/add_country", async (req, res) => {
@@ -55,6 +57,11 @@ async function run() {
     app.get("/country", async (req, res) => {
       const allCountry = await subCategoriesCollection.find().toArray();
       res.send(allCountry);
+    });
+    app.post("/add_places", async (req, res) => {
+      const newPlace = req.body;
+      const result = await placesCollection.insertOne(newPlace);
+      res.send(result);
     });
     /*------------------------------------------------------------------------------*/
 
