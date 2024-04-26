@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -54,13 +54,23 @@ async function run() {
       const result = await subCategoriesCollection.insertOne(newCountry);
       res.send(result);
     });
-    app.get("/country", async (req, res) => {
+    app.get("/countries", async (req, res) => {
       const allCountry = await subCategoriesCollection.find().toArray();
       res.send(allCountry);
     });
     app.post("/add_places", async (req, res) => {
       const newPlace = req.body;
       const result = await placesCollection.insertOne(newPlace);
+      res.send(result);
+    });
+    app.get("/places", async (req, res) => {
+      const allPlaces = await placesCollection.find().toArray();
+      res.send(allPlaces);
+    });
+    app.get("/places/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await placesCollection.findOne(query);
       res.send(result);
     });
     /*------------------------------------------------------------------------------*/
