@@ -32,6 +32,7 @@ async function run() {
     const userCollection = client.db("eastwardJourneys").collection("users");
 
     /*------------------------------------------------------------------------------*/
+    // continent
     app.post("/add_continent", async (req, res) => {
       const newContinent = req.body;
       const result = await categoriesCollection.insertOne(newContinent);
@@ -49,6 +50,7 @@ async function run() {
       );
       res.send(filteringCountry);
     });
+    // country
     app.post("/add_country", async (req, res) => {
       const newCountry = req.body;
       const result = await subCategoriesCollection.insertOne(newCountry);
@@ -58,6 +60,7 @@ async function run() {
       const allCountry = await subCategoriesCollection.find().toArray();
       res.send(allCountry);
     });
+    // places
     app.post("/add_places", async (req, res) => {
       const newPlace = req.body;
       const result = await placesCollection.insertOne(newPlace);
@@ -80,6 +83,24 @@ async function run() {
         (place) => place.countryName === country
       );
       res.send(filteringPlaces);
+    });
+    app.delete("/places/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await placesCollection.deleteOne(query);
+      res.send(result);
+    });
+    app.put("/places/:id", async (req, res) => {
+      const { id } = req.params;
+      const updatedPlace = req.body;
+      const options = { upsert: true };
+      const query = { _id: new ObjectId(id) };
+      const result = await placesCollection.updateOne(
+        query,
+        { $set: updatedPlace },
+        options
+      );
+      res.send(result);
     });
     /*------------------------------------------------------------------------------*/
 
