@@ -102,6 +102,23 @@ async function run() {
       );
       res.send(result);
     });
+    //user 
+  
+    app.post("/add_user", async (req, res) => {
+      const newUser = req.body;
+      const result = await userCollection.insertOne(newUser);
+      res.send(result);
+    });
+    app.get("/users", async (req, res) => {
+      const allUsers = await userCollection.find().toArray();
+      res.send(allUsers);
+    });
+    // app.get("/users/:id", async (req, res) => {
+    //   const { id } = req.params;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await userCollection.findOne(query);
+    //   res.send(result);
+    // });
     /*------------------------------------------------------------------------------*/
 
     await client.db("admin").command({ ping: 1 });
