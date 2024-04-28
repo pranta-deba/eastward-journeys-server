@@ -113,6 +113,16 @@ async function run() {
       const allUsers = await userCollection.find().toArray();
       res.send(allUsers);
     });
+    app.patch("/users", async (req, res) => {
+      const updatedUser = req.body;
+      const query = { email: updatedUser.email };
+      const result = await userCollection.updateOne(query, {
+        $set: {
+          lastSignInTime: updatedUser.lastSignInTime,
+        },
+      });
+      res.send(result);
+    });
     /*------------------------------------------------------------------------------*/
 
     await client.db("admin").command({ ping: 1 });
