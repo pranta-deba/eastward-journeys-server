@@ -38,6 +38,18 @@ async function run() {
       const result = await categoriesCollection.insertOne(newContinent);
       res.send(result);
     });
+    app.put("/continent/:id", async (req, res) => {
+      const { id } = req.params;
+      const updatedContinent = req.body;
+      const options = { upsert: true };
+      const query = { _id: new ObjectId(id) };
+      const result = await categoriesCollection.updateOne(
+        query,
+        { $set: updatedContinent },
+        options
+      );
+      res.send(result);
+    });
     app.get("/continents", async (req, res) => {
       const allCategories = await categoriesCollection.find().toArray();
       res.send(allCategories);
@@ -50,6 +62,12 @@ async function run() {
       );
       res.send(filteringCountry);
     });
+    app.delete("/continent/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await categoriesCollection.deleteOne(query);
+      res.send(result);
+    });
     // country
     app.post("/add_country", async (req, res) => {
       const newCountry = req.body;
@@ -59,6 +77,24 @@ async function run() {
     app.get("/countries", async (req, res) => {
       const allCountry = await subCategoriesCollection.find().toArray();
       res.send(allCountry);
+    });
+    app.delete("/country/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await subCategoriesCollection.deleteOne(query);
+      res.send(result);
+    });
+    app.put("/country/:id", async (req, res) => {
+      const { id } = req.params;
+      const updatedCountry = req.body;
+      const options = { upsert: true };
+      const query = { _id: new ObjectId(id) };
+      const result = await subCategoriesCollection.updateOne(
+        query,
+        { $set: updatedCountry },
+        options
+      );
+      res.send(result);
     });
     // places
     app.post("/add_places", async (req, res) => {
